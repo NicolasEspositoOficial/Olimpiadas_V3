@@ -1,38 +1,32 @@
-.App {
-  text-align: center;
+:root{
+    /* Colores */
+    ---color-base-1: #ffffff;
+    ---color-base-2: #fff;
+    ---color-base-3: #ffff;
+    /* tamaños de textos */
+    ---tamaño-de-texto-extra-pequeño: 1.3rem;
+    ---tamaño-de-texto-pequeño: 1.6rem;
+    ---tamaño-de-texto-normal: 2rem;
+    ---tamaño-de-texto-grande: 2.4rem;
+    ---tamaño-de-texto-extra-grande: 2.88rem;
+    ---estilo-de-fuente: Arial, Helvetica, sans-serif;
+    /* padding */
+    ---estilo-de-padding-1: 0.5rem 1rem;
+    
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.ventana-de-registro{
+    display: flex;
+    
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.lado-derecho-registro, .lado-izquierdo-registro{
+    width: 50%;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.lado-izquierdo-registro{
+    background-color: aquamarine;
+    align-content: center;
+    font-size: var(---tamaño-de-texto-normal);
+    padding: 2rem;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.estilo-de-texto-de-formulario-registro{
+    padding: 1rem  0rem;
 }
