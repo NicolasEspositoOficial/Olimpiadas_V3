@@ -1,89 +1,75 @@
+require('dotenv').config(); // Al estar el .env dentro de la misma carpeta Servidor, esto lo leerá correctamente
 const express = require('express');
 const path = require('path');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const cors = require('cors');
+
 const app = express();
 
 // --- MIDDLEWARES ---
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
-// --- CONFIGURACIÓN DE BASE DE DATOS (HOSTINGER) ---
-const dbConfig = {
-    host: "srv1848.hstgr.io", 
-    user: "u971714708_olipiadas", 
-    password: "1193094006Ni.", 
-    database: "u971714708_olipiadas" 
-};
+// --- CONFIGURACIÓN DE BASE DE DATOS (POOL) ---
+// Usamos el Pool para gestionar las conexiones de forma automática y eficiente
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
-let db;
-
-function handleDisconnect() {
-    db = mysql.createConnection(dbConfig);
-
-    db.connect((err) => {
-        if (err) {
-            console.error("❌ ERROR DE CONEXIÓN:", err.message);
-            setTimeout(handleDisconnect, 2000); 
-        } else {
-            console.log("🚀 ¡CONEXIÓN EXITOSA! Base de datos en Hostinger lista.");
-        }
-    });
-
-    db.on('error', (err) => {
-        console.error("⚠️ ERROR EN DB:", err.code);
-        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
-            handleDisconnect(); 
-        } else {
-            throw err;
-        }
-    });
-}
-
-handleDisconnect();
+// Verificación inicial de conexión (Aparecerá en tu consola)
+pool.getConnection((err, connection) => {
+    if (err) {
+        console.error("❌ ERROR DE CONEXIÓN A LA DB:", err.message);
+        console.log("Asegúrate de que el archivo .env tenga los datos correctos y esté dentro de la carpeta Servidor.");
+    } else {
+        console.log("🚀 POOL DE CONEXIÓN LISTO: Base de datos vinculada con éxito.");
+        connection.release();
+    }
+});
 
 // --- RUTAS DEL API ---
 
-// 1. Obtener Ranking
+// 1. Obtener Ranking de estudiantes
 app.get('/usuarios', (req, res) => {
-    const query = `
-        SELECT id, nombre, grado, aciertos, tiempo 
-        FROM usuarios 
-        WHERE rol = 'estudiante' 
-        ORDER BY aciertos DESC, tiempo ASC
-    `;
-    db.query(query, (err, data) => {
-        if (err) return res.status(500).json({ error: err.sqlMessage });
-        return res.json(data);
+    const query = "SELECT id, nombre, grado, aciertos, tiempo FROM usuarios WHERE rol = 'estudiante' ORDER BY aciertos DESC, tiempo ASC";
+    pool.query(query, (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(data);
     });
 });
 
-// 2. Guardar Resultado
+// 2. Guardar Resultado del examen
 app.post('/guardar-resultado', (req, res) => {
     const { nombre, grado, aciertos, tiempo } = req.body;
-    const query = `
-        INSERT INTO usuarios (nombre, grado, aciertos, tiempo, rol, contraseña) 
-        VALUES (?, ?, ?, ?, 'estudiante', '123')
-    `;
-    db.query(query, [nombre, grado, aciertos, tiempo], (err, result) => {
-        if (err) return res.status(500).json({ error: err.sqlMessage });
-        return res.json({ message: "Éxito", id: result.insertId });
+    if (!nombre || !grado) return res.status(400).json({ error: "Datos incompletos" });
+    
+    const query = "INSERT INTO usuarios (nombre, grado, aciertos, tiempo, rol, contraseña) VALUES (?, ?, ?, ?, 'estudiante', '123')";
+    pool.query(query, [nombre, grado, aciertos, tiempo], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Éxito", id: result.insertId });
     });
 });
 
 // 3. Obtener Preguntas por Grado
 app.get('/preguntas', (req, res) => {
     const { grado } = req.query;
-    const query = "SELECT * FROM preguntas WHERE grado = ?";
-    db.query(query, [grado], (err, data) => {
-        if (err) return res.status(500).json({ error: err.sqlMessage });
-        return res.json(data);
+    pool.query("SELECT * FROM preguntas WHERE grado = ?", [grado], (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(data);
     });
 });
 
-// 4. Admin: Guardar/Actualizar Pregunta
+// 4. Admin: Guardar o Actualizar Pregunta
 app.post('/guardar-pregunta', (req, res) => {
     const { id, grado, titulo, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta } = req.body;
+    
+    // Si el id contiene 'temp', lo tratamos como nuevo registro (null)
     const idReal = (id && String(id).includes('temp')) ? null : id;
     
     const query = `
@@ -95,44 +81,38 @@ app.post('/guardar-pregunta', (req, res) => {
         opcion_c=VALUES(opcion_c), opcion_d=VALUES(opcion_d), 
         respuesta_correcta=VALUES(respuesta_correcta)
     `;
+    
     const values = [idReal, grado, titulo, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta];
-    db.query(query, values, (err, result) => {
-        if (err) return res.status(500).json({ error: err.sqlMessage });
-        return res.json({ message: "Éxito", id: result.insertId || idReal });
+    
+    pool.query(query, values, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Éxito", id: result.insertId || idReal });
     });
 });
 
 // 5. Eliminar Pregunta
 app.delete('/eliminar-pregunta/:id', (req, res) => {
-    const query = "DELETE FROM preguntas WHERE id = ?";
-    db.query(query, [req.params.id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.sqlMessage });
-        return res.json({ message: "Pregunta eliminada" });
+    pool.query("DELETE FROM preguntas WHERE id = ?", [req.params.id], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Pregunta eliminada" });
     });
 });
 
-// --- SERVIR FRONTEND (CONFIGURACIÓN PARA HOSTINGER) ---
-
-// Definimos la ruta a la carpeta build (un nivel arriba de /Servidor)
+// --- SERVIR FRONTEND (REACT BUILD) ---
+// Sube un nivel para encontrar la carpeta 'build' desde 'Servidor'
 const buildPath = path.resolve(__dirname, '..', 'build');
-
-// Servimos archivos estáticos
 app.use(express.static(buildPath));
 
-// MANEJO DE RUTAS DE REACT: Esta ruta DEBE ir al final de todas las API
+// Manejo de rutas de React
 app.get('*', (req, res) => {
-    res.sendFile(path.join(buildPath, 'index.html'), (err) => {
-        if (err) {
-            res.status(500).send("Error: No se encontró la carpeta build o el archivo index.html");
-        }
-    });
+    res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 // --- INICIO DEL SERVIDOR ---
 const PORT = process.env.PORT || 8081; 
 app.listen(PORT, () => {
     console.log(`-------------------------------------------`);
-    console.log(`Servidor activo en puerto: ${PORT}`);
-    console.log(`Ruta build: ${buildPath}`);
+    console.log(`Servidor Olimpiadas v2 activo en puerto: ${PORT}`);
+    console.log(`Buscando carpeta build en: ${buildPath}`);
     console.log(`-------------------------------------------`);
 });
