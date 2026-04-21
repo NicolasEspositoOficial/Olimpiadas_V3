@@ -13,13 +13,13 @@ app.use(cors());
 app.use(express.json());
 
 // --- CONFIGURACIÓN DE BASE DE DATOS (POOL) ---
-// Configuración actualizada con IP y Puerto explícito para conexión remota a Hostinger
+// Configuración actualizada para PRODUCCIÓN en Hostinger
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || '82.197.82.138', // Tu IP de Hostinger
-    port: process.env.DB_PORT || 8081,            
-    user: process.env.DB_USER || 'u971714708_olipiadas', // ¡El usuario correcto!
-    password: process.env.DB_PASS || '1193094006Ni.',    // Tu contraseña
-    database: process.env.DB_NAME || 'u971714708_olipiadas', // El nombre de la DB
+    host: process.env.DB_HOST || 'localhost', // En Hostinger, el código y la DB viven juntos
+    port: process.env.DB_PORT || 3306,        // Puerto de MySQL (NUNCA 8081 aquí)
+    user: process.env.DB_USER || 'u971714708_OlimV3', // Tu nuevo usuario
+    password: process.env.DB_PASS || '1193094006Ni.', // Tu contraseña
+    database: process.env.DB_NAME || 'u971714708_OlimV3', // Tu nueva base de datos
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -30,7 +30,7 @@ pool.getConnection((err, connection) => {
     if (err) {
         console.error("❌ ERROR DE CONEXIÓN A LA DB:", err.code, err.message);
     } else {
-        console.log("🚀 CONEXIÓN EXITOSA: Base de datos vinculada de forma remota.");
+        console.log("🚀 CONEXIÓN EXITOSA: Base de datos vinculada correctamente.");
         connection.release();
     }
 });
