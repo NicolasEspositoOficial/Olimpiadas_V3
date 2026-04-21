@@ -124,7 +124,8 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
                 <button onClick={alCerrar} className="btn-salir">Cerrar Editor</button>
             </div>
 
-            <div className="formulario-editor">
+            {/* AQUÍ ESTÁ EL FIX: Agregamos overflowY para permitir scroll vertical y maxHeight para que no se salga de la pantalla */}
+            <div className="formulario-editor" style={{ overflowY: 'auto', maxHeight: '85vh', paddingRight: '15px' }}>
                 {!preguntaSeleccionada ? (
                     <div className="aviso-seleccionar">
                         <p>Haz clic en <b>"+"</b> para crear una pregunta de {grado}.</p>
@@ -206,11 +207,11 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
                             </div>
                         </div>
 
-                        <div className="acciones-editor" style={{ marginTop: '20px' }}>
+                        <div className="acciones-editor" style={{ marginTop: '20px', paddingBottom: '20px' }}>
                             <button className="btn-accion primary" onClick={guardarEnBD}>
                                 Guardar en Base de Datos
                             </button>
-                            <button className="btn-accion btn-eliminar" onClick={eliminarPregunta}>
+                            <button className="btn-accion btn-eliminar" onClick={eliminarPregunta} style={{ marginLeft: '10px' }}>
                                 Eliminar
                             </button>
                         </div>
