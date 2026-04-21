@@ -13,12 +13,13 @@ app.use(cors());
 app.use(express.json());
 
 // --- CONFIGURACIÓN DE BASE DE DATOS (POOL) ---
-// Ahora leerá correctamente los datos de tu panel de Hostinger o archivo .env
+// Configuración actualizada con IP y Puerto explícito para conexión remota a Hostinger
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost', 
-    user: process.env.DB_USER || 'u971714708_olipiadas', 
-    password: process.env.DB_PASS, 
-    database: process.env.DB_NAME || 'u971714708_olipiadas',
+    host: process.env.DB_HOST || '82.197.82.138', // Tu IP de Hostinger
+    port: process.env.DB_PORT || 8081,            
+    user: process.env.DB_USER || 'u971714708_olipiadas', // ¡El usuario correcto!
+    password: process.env.DB_PASS || '1193094006Ni.',    // Tu contraseña
+    database: process.env.DB_NAME || 'u971714708_olipiadas', // El nombre de la DB
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -29,7 +30,7 @@ pool.getConnection((err, connection) => {
     if (err) {
         console.error("❌ ERROR DE CONEXIÓN A LA DB:", err.code, err.message);
     } else {
-        console.log("🚀 CONEXIÓN EXITOSA: Base de datos vinculada.");
+        console.log("🚀 CONEXIÓN EXITOSA: Base de datos vinculada de forma remota.");
         connection.release();
     }
 });
@@ -63,18 +64,32 @@ app.get('/preguntas', (req, res) => {
 });
 
 app.post('/guardar-pregunta', (req, res) => {
-    const { id, grado, titulo, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta } = req.body;
+    const { 
+        id, grado, titulo, enunciado, imagen_enunciado, 
+        opcion_a, imagen_a, opcion_b, imagen_b, 
+        opcion_c, imagen_c, opcion_d, imagen_d, respuesta_correcta 
+    } = req.body;
+    
     const idReal = (id && String(id).includes('temp')) ? null : id;
+    
     const query = `
-        INSERT INTO preguntas (id, grado, titulo, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO preguntas (id, grado, titulo, enunciado, imagen_enunciado, opcion_a, imagen_a, opcion_b, imagen_b, opcion_c, imagen_c, opcion_d, imagen_d, respuesta_correcta)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE 
-        titulo=VALUES(titulo), enunciado=VALUES(enunciado), 
-        opcion_a=VALUES(opcion_a), opcion_b=VALUES(opcion_b), 
-        opcion_c=VALUES(opcion_c), opcion_d=VALUES(opcion_d), 
+        titulo=VALUES(titulo), enunciado=VALUES(enunciado), imagen_enunciado=VALUES(imagen_enunciado),
+        opcion_a=VALUES(opcion_a), imagen_a=VALUES(imagen_a), 
+        opcion_b=VALUES(opcion_b), imagen_b=VALUES(imagen_b), 
+        opcion_c=VALUES(opcion_c), imagen_c=VALUES(imagen_c), 
+        opcion_d=VALUES(opcion_d), imagen_d=VALUES(imagen_d), 
         respuesta_correcta=VALUES(respuesta_correcta)
     `;
-    const values = [idReal, grado, titulo, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta];
+    
+    const values = [
+        idReal, grado, titulo, enunciado, imagen_enunciado, 
+        opcion_a, imagen_a, opcion_b, imagen_b, 
+        opcion_c, imagen_c, opcion_d, imagen_d, respuesta_correcta
+    ];
+
     pool.query(query, values, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Éxito", id: result.insertId || idReal });
@@ -89,17 +104,14 @@ app.delete('/eliminar-pregunta/:id', (req, res) => {
 });
 
 // --- SERVIR FRONTEND (REACT BUILD) ---
-// IMPORTANTE: Como server.js y build están ahora en la misma carpeta raíz
 const buildPath = path.join(__dirname, 'build');
 app.use(express.static(buildPath));
 
-// Manejo de rutas de React (SPA) para que no den 404 al recargar
 app.get('*', (req, res) => {
     res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 // --- INICIO ---
-// Hostinger asigna el puerto automáticamente mediante process.env.PORT
 const PORT = process.env.PORT || 8081; 
 app.listen(PORT, () => {
     console.log(`Servidor activo en puerto: ${PORT}`);

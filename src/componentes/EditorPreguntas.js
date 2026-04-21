@@ -6,7 +6,6 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
     const [preguntaSeleccionada, setPreguntaSeleccionada] = useState(null);
     const [cargando, setCargando] = useState(true);
 
-    // 1. CARGAR PREGUNTAS (Ruta corregida para Hostinger)
     const cargarPreguntas = () => {
         setCargando(true);
         fetch(`/preguntas?grado=${grado}`)
@@ -30,16 +29,20 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
         cargarPreguntas();
     }, [grado]);
 
-    // 2. CREAR NUEVA PREGUNTA
     const nuevaPregunta = () => {
         const nueva = {
             id: null, 
             titulo: '',
             enunciado: '',
+            imagen_enunciado: '',
             opcion_a: '',
+            imagen_a: '',
             opcion_b: '',
+            imagen_b: '',
             opcion_c: '',
+            imagen_c: '',
             opcion_d: '',
+            imagen_d: '',
             respuesta_correcta: 'a',
             grado: grado
         };
@@ -47,10 +50,9 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
         setPreguntas([...preguntas, { ...nueva, id: 'temp-' + Date.now() }]);
     };
 
-    // 3. GUARDAR EN BD (Ruta corregida para Hostinger)
     const guardarEnBD = () => {
-        if (!preguntaSeleccionada.enunciado || !preguntaSeleccionada.opcion_a) {
-            alert("Por favor rellena al menos el enunciado y la opción A");
+        if (!preguntaSeleccionada.enunciado && !preguntaSeleccionada.imagen_enunciado) {
+            alert("Por favor rellena al menos el enunciado o la imagen complementaria");
             return;
         }
 
@@ -67,7 +69,6 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
         .catch(err => alert("Error al conectar con el servidor"));
     };
 
-    // 4. ELIMINAR PREGUNTA (Ruta corregida para Hostinger)
     const eliminarPregunta = () => {
         if (!preguntaSeleccionada.id || String(preguntaSeleccionada.id).includes('temp')) {
             setPreguntas(preguntas.filter(p => p.id !== preguntaSeleccionada.id));
@@ -87,7 +88,6 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
         }
     };
 
-    // 5. MANEJAR CAMBIOS
     const manejarCambioInput = (e) => {
         const { name, value } = e.target;
         const actualizada = { ...preguntaSeleccionada, [name]: value };
@@ -154,36 +154,59 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
                             ></textarea>
                         </div>
 
-                        <div className="zona-drop-imagen">
-                            <p>Imagen (Próximamente)</p>
+                        <div className="input-group-vertical">
+                            <label>URL Imagen Complementaria (Opcional):</label>
+                            <input 
+                                name="imagen_enunciado"
+                                type="text" 
+                                className="input-texto" 
+                                value={preguntaSeleccionada.imagen_enunciado || ''}
+                                onChange={manejarCambioInput}
+                                placeholder="Pega el link de la imagen de la pregunta aquí..."
+                            />
                         </div>
 
                         <div className="seccion-respuestas">
                             <p className="label-respuestas">Respuestas* (Marca la correcta)</p>
-                            <div className="grid-respuestas">
+                            <div className="grid-respuestas" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                 {['a', 'b', 'c', 'd'].map((letra) => (
-                                    <div key={letra} className="respuesta-fila">
-                                        <label>{letra.toUpperCase()}</label>
-                                        <input 
-                                            name={`opcion_${letra}`}
-                                            className="input-respuesta" 
-                                            type="text" 
-                                            value={preguntaSeleccionada[`opcion_${letra}`] || ''}
-                                            onChange={manejarCambioInput}
-                                        />
-                                        <input 
-                                            type="radio" 
-                                            name="respuesta_correcta" 
-                                            className="radio-correcta"
-                                            checked={preguntaSeleccionada.respuesta_correcta === letra}
-                                            onChange={() => cambiarCorrecta(letra)}
-                                        />
+                                    <div key={letra} className="respuesta-fila" style={{ background: '#f5f5f5', padding: '10px', borderRadius: '8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                                            <label style={{ fontWeight: 'bold' }}>{letra.toUpperCase()}</label>
+                                            <input 
+                                                name={`opcion_${letra}`}
+                                                className="input-respuesta" 
+                                                type="text" 
+                                                value={preguntaSeleccionada[`opcion_${letra}`] || ''}
+                                                onChange={manejarCambioInput}
+                                                placeholder={`Texto de opción ${letra.toUpperCase()}`}
+                                            />
+                                            <input 
+                                                type="radio" 
+                                                name="respuesta_correcta" 
+                                                className="radio-correcta"
+                                                checked={preguntaSeleccionada.respuesta_correcta === letra}
+                                                onChange={() => cambiarCorrecta(letra)}
+                                                style={{ transform: 'scale(1.5)', marginLeft: '10px' }}
+                                            />
+                                        </div>
+                                        <div style={{ paddingLeft: '25px' }}>
+                                            <input 
+                                                name={`imagen_${letra}`}
+                                                className="input-respuesta" 
+                                                type="text" 
+                                                value={preguntaSeleccionada[`imagen_${letra}`] || ''}
+                                                onChange={manejarCambioInput}
+                                                placeholder={`URL Imagen opción ${letra.toUpperCase()} (Opcional)`}
+                                                style={{ fontSize: '0.9em', border: '1px dashed #ccc' }}
+                                            />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="acciones-editor">
+                        <div className="acciones-editor" style={{ marginTop: '20px' }}>
                             <button className="btn-accion primary" onClick={guardarEnBD}>
                                 Guardar en Base de Datos
                             </button>
