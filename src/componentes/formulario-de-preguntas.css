@@ -2,7 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: fit-content;
+    min-height: 85vh; /* Cambiado de fit-content a min-height para dar más espacio */
+    padding: 2rem 0; /* Da un respiro arriba y abajo para no pisar las flechas */
 }
 
 .contenedor-de-pregunta {
@@ -13,7 +14,12 @@
     padding: 2rem;
     background-color: var(---color-base-4);
     width: 80%;
-    height: 70vh;
+    
+    /* --- LA MAGIA DE LA ALTURA --- */
+    height: auto; /* ¡Reemplazamos el 70vh! Ahora crece según su contenido */
+    max-height: 85vh; /* Evita que crezca más allá de la pantalla */
+    overflow-y: auto; /* Si el contenido es extremo, crea un scroll interno */
+    
     border-radius: 1rem;
     box-shadow: 0rem 0rem 1.5rem var(---color-base-3);
 }
@@ -28,45 +34,53 @@
     font-family: var(---estilo-de-fuente);
     color: var(---color-base-3);
     padding-bottom: 1rem;
-
 }
 
 .estilo-de-pregunta {
     font-size: var(---tamaño-de-texto-normal);
-    text-align: left; /* Pro-tip: Los problemas matemáticos largos se leen mucho mejor alineados a la izquierda que centrados */
+    text-align: left; /* Problemas largos se leen mejor a la izquierda */
     font-family: var(---estilo-de-fuente);
     margin: 10px 0;
     width: 100%;
-    text-align: center;
-    /* --- LA MAGIA PARA LOS SALTOS DE LÍNEA Y EL SCROLL --- */
-    white-space: pre-wrap; /* ¡Esto hace que el HTML respete los "Enter" que diste en el editor! */
-    max-height: 180px; /* La altura máxima que va a tener el texto antes de cortarse */
-    overflow-y: auto; /* Crea la barra de scroll vertical solo si el texto es más alto que los 180px */
-    padding-right: 10px; /* Le da un respirito al texto para que no se pegue contra la barra de scroll */
+    
+    /* --- MAGIA PARA SALTOS DE LÍNEA Y SCROLL EN EL TEXTO --- */
+    white-space: pre-wrap; 
+    max-height: 180px; 
+    overflow-y: auto; 
+    padding-right: 10px; 
 }
 
 .imagen {
     width: 100%;
-    height: 45%;
+    /* --- AJUSTE DE IMAGEN --- */
+    height: auto; /* Reemplazamos el rígido 45% */
+    max-height: 25vh; /* Límite dinámico basado en la pantalla */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
 }
 
 .imagen-de-pregunta {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     height: 100%;
+    max-height: 25vh;
     object-fit: contain;
 }
 
 .respuestas {
     width: 90%;
+    margin-bottom: 1rem;
 }
 
 .bloque-de-respuestas {
     width: 100%;
     display: flex;
+    justify-content: space-between;
 }
 
 .estilo-de-respuesta {
-    width: 40%;
+    width: 45%; /* Un poco más de ancho para aprovechar el espacio */
     margin: auto;
     padding: var(---estilo-de-padding-1);
     margin-top: 1rem;
@@ -77,6 +91,21 @@
     background-color: var(---color-base-6);
     transition: all 250ms ease;
     cursor: pointer;
+    
+    /* Aseguramos que el contenido del botón se centre bien */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+/* --- CONTROL PARA LAS IMÁGENES DENTRO DE LOS BOTONES --- */
+.estilo-de-respuesta img {
+    max-height: 70px; /* Impide que la fracción se coma todo el botón */
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 5px;
 }
 
 .estilo-de-respuesta:hover {
