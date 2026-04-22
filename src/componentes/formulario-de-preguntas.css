@@ -38,7 +38,7 @@
 
 .estilo-de-pregunta {
     font-size: var(---tamaño-de-texto-normal);
-    text-align: left; /* Problemas largos se leen mejor a la izquierda */
+    text-align: center; /* Problemas largos se leen mejor a la izquierda */
     font-family: var(---estilo-de-fuente);
     margin: 10px 0;
     width: 100%;
