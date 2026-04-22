@@ -1,6 +1,6 @@
 .contenedorPadreDeContador{
     display: flex;
-    height: 15vh;
+    height: 10vh;
 }
 .containerPadreContadorTiempo{
     margin: auto;

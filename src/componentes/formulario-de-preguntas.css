@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 85vh; /* Cambiado de fit-content a min-height para dar más espacio */
+    min-height: 75vh; /* Cambiado de fit-content a min-height para dar más espacio */
     padding: 2rem 0; /* Da un respiro arriba y abajo para no pisar las flechas */
 }
 
