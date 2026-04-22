@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
+    height: fit-content;
 }
 
 .contenedor-de-pregunta {
@@ -13,7 +13,7 @@
     padding: 2rem;
     background-color: var(---color-base-4);
     width: 80%;
-    height: 80%;
+    height: fit-content;
     border-radius: 1rem;
     box-shadow: 0rem 0rem 1.5rem var(---color-base-3);
 }
