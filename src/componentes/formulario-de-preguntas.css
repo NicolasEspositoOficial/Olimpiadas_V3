@@ -13,7 +13,7 @@
     padding: 2rem;
     background-color: var(---color-base-4);
     width: 80%;
-    height: fit-content;
+    height: 70vh;
     border-radius: 1rem;
     box-shadow: 0rem 0rem 1.5rem var(---color-base-3);
 }
@@ -37,7 +37,7 @@
     font-family: var(---estilo-de-fuente);
     margin: 10px 0;
     width: 100%;
-    
+    text-align: center;
     /* --- LA MAGIA PARA LOS SALTOS DE LÍNEA Y EL SCROLL --- */
     white-space: pre-wrap; /* ¡Esto hace que el HTML respete los "Enter" que diste en el editor! */
     max-height: 180px; /* La altura máxima que va a tener el texto antes de cortarse */
