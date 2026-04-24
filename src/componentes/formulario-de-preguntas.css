@@ -50,6 +50,10 @@
     padding-right: 10px; 
 }
 
+.enunciado-de-respuesta{
+    font-size: 2rem;
+}
+
 .imagen {
     width: 100%;
     /* --- AJUSTE DE IMAGEN --- */

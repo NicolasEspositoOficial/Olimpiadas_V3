@@ -17,7 +17,7 @@ function FormularioDePreguntasEstudiante({ preguntaActual, total, numeroActual, 
         {imagenURL && (
           <img src={imagenURL} alt={`Opción ${letra}`} style={{ maxWidth: '100%', maxHeight: '120px', objectFit: 'contain', borderRadius: '5px' }} />
         )}
-        {texto && <span>{texto}</span>}
+        {texto && <span className='enunciado-de-respuesta'>{texto}</span>}
       </div>
     );
   };
