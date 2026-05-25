@@ -12,7 +12,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 2rem;
-    background-color: var(---color-base-4);
+    background-color: var(--color-base-4);
     width: 80%;
     
     /* --- LA MAGIA DE LA ALTURA --- */
@@ -21,7 +21,7 @@
     overflow-y: auto; /* Si el contenido es extremo, crea un scroll interno */
     
     border-radius: 1rem;
-    box-shadow: 0rem 0rem 1.5rem var(---color-base-3);
+    box-shadow: 0rem 0rem 1.5rem var(--color-base-3);
 }
 
 .texto-de-pregunta {
@@ -30,16 +30,16 @@
 
 .contador-de-preguntas {
     text-align: center;
-    font-size: var(---tamaño-de-texto-normal);
-    font-family: var(---estilo-de-fuente);
-    color: var(---color-base-3);
+    font-size: var(--tamaño-de-texto-normal);
+    font-family: var(--estilo-de-fuente);
+    color: var(--color-base-3);
     padding-bottom: 1rem;
 }
 
 .estilo-de-pregunta {
-    font-size: var(---tamaño-de-texto-normal);
+    font-size: var(--tamaño-de-texto-normal);
     text-align: center; /* Problemas largos se leen mejor a la izquierda */
-    font-family: var(---estilo-de-fuente);
+    font-family: var(--estilo-de-fuente);
     margin: 10px 0;
     width: 100%;
     
@@ -85,13 +85,13 @@
 .estilo-de-respuesta {
     width: 45%; /* Un poco más de ancho para aprovechar el espacio */
     margin: auto;
-    padding: var(---estilo-de-padding-1);
+    padding: var(--estilo-de-padding-1);
     margin-top: 1rem;
     margin-bottom: 1rem;
-    font-size: var(---tamaño-de-texto-normal);
+    font-size: var(--tamaño-de-texto-normal);
     border: 2px solid transparent;
     border-radius: 1rem;
-    background-color: var(---color-base-6);
+    background-color: var(--color-base-6);
     transition: all 250ms ease;
     cursor: pointer;
     
@@ -112,16 +112,16 @@
 
 .estilo-de-respuesta:hover {
     scale: 110%;
-    background-color: var(---color-base-5);
+    background-color: var(--color-base-5);
     color: white;
 }
 
 /* --- ESTADO SELECCIONADO --- */
 .estilo-de-respuesta.seleccionada {
     scale: 115%;
-    background-color: var(---color-base-5); /* Azul corporativo */
+    background-color: var(--color-base-5); 
     color: white;
-    box-shadow: 0rem 0rem 0.5rem var(---color-base-3);
+    box-shadow: 0rem 0rem 0.5rem var(--color-base-3);
     font-weight: bold;
 }
 
@@ -131,5 +131,15 @@
 
 .estilo-de-respuesta.seleccionada:hover {
     scale: 115%;
-    background-color: var(---color-base-5);
+    background-color: var(--color-base-5);
+}
+
+/* --- SOLUCIÓN PARA ELEVAR EL EXPONENTE (EL SOMBRERITO) --- */
+.enunciado-de-respuesta sup,
+.estilo-de-pregunta sup {
+    font-size: 0.55em;        /* Un poco más pequeño que el texto base */
+    vertical-align: baseline; /* Resetea el comportamiento por defecto que no funciona */
+    position: relative;       /* Nos permite usar 'top' para moverlo */
+    top: -0.6em;              /* ¡Esta es la magia! Eleva el número. */
+    line-height: 0;           /* Evita que el botón crezca en altura y descuadre el diseño */
 }
