@@ -9,14 +9,12 @@ function FormularioDePreguntasEstudiante({ preguntaActual, total, numeroActual, 
 
   if (!preguntaActual) return null;
 
-  // Función interna para detectar el símbolo '^' y transformarlo en una etiqueta HTML de exponente <sup>
+  // Función interna CORREGIDA: Ahora mantiene el símbolo '^' visible junto al exponente
   const formatearExponentes = (textoOriginal) => {
     if (!textoOriginal) return "";
-    // Busca un '^' seguido de números, letras o símbolos matemáticos comunes y lo mete en un <sup>
-    return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '<sup>$1</sup>');
+    return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '^<sup>$1</sup>');
   };
 
-  // Función de ayuda para renderizar el contenido del botón (Imagen + Texto)
   const renderizarOpcion = (letra, texto, imagenURL) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}>
@@ -25,7 +23,6 @@ function FormularioDePreguntasEstudiante({ preguntaActual, total, numeroActual, 
           <img src={imagenURL} alt={`Opción ${letra}`} style={{ maxWidth: '100%', maxHeight: '120px', objectFit: 'contain', borderRadius: '5px' }} />
         )}
         {texto && (
-          /* Se usa dangerouslySetInnerHTML para que React interprete las etiquetas <sup> generadas por la función */
           <span 
             className='enunciado-de-respuesta'
             dangerouslySetInnerHTML={{ __html: formatearExponentes(texto) }}
@@ -43,7 +40,6 @@ function FormularioDePreguntasEstudiante({ preguntaActual, total, numeroActual, 
             <span>{numeroActual}/{total}</span>
           </div>
           {preguntaActual.enunciado && (
-              /* También se aplica al enunciado principal por si incluyes metros o centímetros cuadrados allí */
               <p 
                 className="estilo-de-pregunta"
                 dangerouslySetInnerHTML={{ __html: formatearExponentes(preguntaActual.enunciado) }}

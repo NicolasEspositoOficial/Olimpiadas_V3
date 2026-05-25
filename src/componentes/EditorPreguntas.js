@@ -101,6 +101,12 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
         setPreguntas(preguntas.map(p => p.id === preguntaSeleccionada.id ? actualizada : p));
     };
 
+    // --- FUNCIÓN DE FORMATO PARA LA VISTA PREVIA ---
+    const formatearExponentes = (textoOriginal) => {
+        if (!textoOriginal) return "";
+        return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '^<sup>$1</sup>');
+    };
+
     return (
         <div className="contenedor-editor-modal">
             <div className="sidebar-editor">
@@ -124,7 +130,6 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
                 <button onClick={alCerrar} className="btn-salir">Cerrar Editor</button>
             </div>
 
-            {/* AQUÍ ESTÁ EL FIX: Agregamos overflowY para permitir scroll vertical y maxHeight para que no se salga de la pantalla */}
             <div className="formulario-editor" style={{ overflowY: 'auto', maxHeight: '85vh', paddingRight: '15px' }}>
                 {!preguntaSeleccionada ? (
                     <div className="aviso-seleccionar">
@@ -153,6 +158,16 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
                                 onChange={manejarCambioInput}
                                 placeholder="Escribe el problema aquí..."
                             ></textarea>
+                            
+                            {/* --- CAJA DE VISTA PREVIA (NUEVO) --- */}
+                            {preguntaSeleccionada.enunciado && (
+                                <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#eef2f5', borderRadius: '8px', border: '1px solid #c5cfcf' }}>
+                                    <span style={{ fontSize: '0.85rem', color: '#555', fontWeight: 'bold' }}>Vista Previa Estudiante:</span>
+                                    <p style={{ marginTop: '5px', whiteSpace: 'pre-wrap' }} 
+                                       dangerouslySetInnerHTML={{ __html: formatearExponentes(preguntaSeleccionada.enunciado) }}>
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="input-group-vertical">
