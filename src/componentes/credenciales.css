@@ -2,7 +2,9 @@
     width: 100%;
     height: 100vh;
     display: flex;
-    background-color: aqua; /*fondo de formulario*/
+    background-image: url(./fondo.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .contenedor_credenciales_usuario{
     margin: auto;
@@ -27,6 +29,7 @@
     font-size: var(---tamaño-de-texto-normal);
     font-family: var(---estilo-de-fuente);
     margin: 0.5rem;
+    color: white;
 }
 .estilo_de_input_1, .estilo_de_input_2{
     border: none;
