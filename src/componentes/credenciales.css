@@ -9,7 +9,7 @@
 .contenedor_credenciales_usuario{
     margin: auto;
     background-color: transparent;
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(3px);
     border: solid 0.2rem var(---color-base-4);
     border-radius: 1rem;
     width: 45rem;
@@ -17,6 +17,7 @@
     justify-content: space-around;
     align-content: center;
     text-align: center;
+    box-shadow: 0.1rem 0.1rem 2rem black;
 }
 .titulo-de-bloque-1{
     font-size: var(---tamaño-de-texto-grande);
