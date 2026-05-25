@@ -10,9 +10,11 @@ function FormularioDePreguntasEstudiante({ preguntaActual, total, numeroActual, 
   if (!preguntaActual) return null;
 
   // Función interna CORREGIDA: Ahora mantiene el símbolo '^' visible junto al exponente
+  // Función interna para detectar el símbolo '^' y renderizar solo el exponente
   const formatearExponentes = (textoOriginal) => {
     if (!textoOriginal) return "";
-    return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '^<sup>$1</sup>');
+    // Reemplaza el ^ y el texto siguiente por una etiqueta <sup> limpia
+    return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '<sup>$1</sup>');
   };
 
   const renderizarOpcion = (letra, texto, imagenURL) => {

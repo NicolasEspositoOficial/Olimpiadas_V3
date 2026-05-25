@@ -104,7 +104,8 @@ const EditorPreguntas = ({ grado, alCerrar }) => {
     // --- FUNCIÓN DE FORMATO PARA LA VISTA PREVIA ---
     const formatearExponentes = (textoOriginal) => {
         if (!textoOriginal) return "";
-        return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '^<sup>$1</sup>');
+        // Renderiza visualmente como exponente sin mostrar el símbolo ^
+        return textoOriginal.replace(/\^([a-zA-Z0-9\-+\*=]+)/g, '<sup>$1</sup>');
     };
 
     return (
