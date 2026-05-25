@@ -24,6 +24,7 @@
     text-transform: uppercase;
     font-family: var(---estilo-de-fuente);
     margin: 2rem 0rem;
+    color: white;
 }
 .label_credenciales{
     font-size: var(---tamaño-de-texto-normal);
